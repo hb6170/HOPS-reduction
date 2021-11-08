@@ -88,7 +88,7 @@ tclean(vis=FontUV+'.flagging_brightlines.selfcal_avgch.ms',
     lownoisethreshold=1.5,
     minbeamfrac=0.3,
     growiterations=75,
-    negativethreshold=0.0,
+    negativethreshold=4.25,
     interactive=False,
     gridder='standard',
     restoringbeam='common',
@@ -118,7 +118,7 @@ tclean(vis=FontUV+'.flagging_brightlines.selfcal_avgch.ms',
     lownoisethreshold=1.5,
     minbeamfrac=0.3,
     growiterations=75,
-    negativethreshold=0.0,
+    negativethreshold=4.25,
     interactive=False,
     gridder='standard',
     restoringbeam='common',
@@ -149,7 +149,7 @@ tclean(vis=FontUV+'.flagging_brightlines.selfcal_avgch.ms',
     lownoisethreshold=1.5,
     minbeamfrac=0.3,
     growiterations=75,
-    negativethreshold=0.0,
+    negativethreshold=4.25,
     interactive=False,
     gridder='standard',
     restoringbeam='common',
@@ -165,7 +165,7 @@ immath(outfile=FontUV+'.flagging_brightlines.POLI',
 
 calstat=imstat(imagename= FontUV+'.flagging_brightlines.POLI', region='', box='370,20,500,500')
 rms_POLI=(calstat['rms'][0])
-sigma_POLI="{:.3f}".format(2*rms_POLI*1e3)+'mJy/beam'
+sigma_POLI="{:.3f}".format(3*rms_POLI*1e3)+'mJy/beam'
 print '>> Sigma_POLI: '+str(sigma_POLI)
 
 immath(outfile=FontUV+'.flagging_brightlines.POLA',
