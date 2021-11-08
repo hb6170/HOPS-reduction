@@ -94,7 +94,7 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     savemodel='modelcolumn')
 
 #### obtain the rms, peak, SNR value
-print('\n' + "######## Noise, Peak and SNR in pre_selfcal are: ")
+print('\n' + "######## Noise, Peak and SNR of the pre_selfcal are: ")
 calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.dirty.image', stokes='I', region='', box='370,20,500,500')
 rms_preselfcal=(calstat['rms'][0])
 rms0=2*rms_preselfcal*1e3
@@ -200,7 +200,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc1.ms',
    
 
 #### obtain the rms, peak, SNR value of 1st_selfcal
-print('\n' + "######## Noise, Peak and SNR in the first selfcal are: ")
+print('\n' + "######## Noise, Peak and SNR of the first selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.1.image', stokes='I', region='', box='370,20,500,500')
 rms_1st_selfcal=(calstat['rms'][0])
 rms1=2*rms_1st_selfcal*1e3
@@ -273,7 +273,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc2.ms',
 
 
 #### obtain the rms, peak, SNR value of 2nd_selfcal
-print('\n' + "######## Noise, Peak and SNR in the second selfcal are: ")
+print('\n' + "######## Noise, Peak and SNR of the second selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.2.image', stokes='I', region='', box='370,20,500,500')
 rms_2nd_selfcal=(calstat['rms'][0])
 rms2=2*rms_2nd_selfcal*1e3
@@ -345,7 +345,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
 
 
 #### obtain the rms, peak, SNR value of 3rd_selfcal
-print('\n' + "######## Noise, Peak and SNR in the third selfcal are: ")
+print('\n' + "######## Noise, Peak and SNR of the third selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.3.image', stokes='I', region='', box='370,20,500,500')
 rms_3rd_selfcal=(calstat['rms'][0])
 rms3=2*rms_3rd_selfcal*1e3
