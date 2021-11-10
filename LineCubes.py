@@ -4,25 +4,29 @@
 
 FontUV=raw_input("Please input the source name: ")
 
-Channels.cont_spw01=raw_input("Please input the channels of continuum in spw0 and spw1: ")
-Channels.cont_spw23=raw_input("Please input the channels of continuum in spw2 and spw3: ")
+Channels_cont_spw01=raw_input("Please input the channels of continuum in spw0 and spw1: ")
+Channels_cont_spw23=raw_input("Please input the channels of continuum in spw2 and spw3: ")
 
-baseline_spw0=raw_input("Please input the baseline in spw0 (mJy): ")
+print('\n' + "The channels of continuum in spw0 and spw1 are: "+str(Channels_cont_spw01))
+print('\n' + "The channels of continuum in spw2 and spw3 are: "+str(Channels_cont_spw23))
+
+baseline_spw0=input("Please input the baseline in spw0 (mJy): ")
 baseline_0="{:.3f}".format(2*baseline_spw0)+'mJy'
-baseline_spw1=raw_input("Please input the baseline in spw1 (mJy): ")
+baseline_spw1=input("Please input the baseline in spw1 (mJy): ")
 baseline_1="{:.3f}".format(2*baseline_spw1)+'mJy'
-baseline_spw2=raw_input("Please input the baseline in spw2 (mJy): ")
+baseline_spw2=input("Please input the baseline in spw2 (mJy): ")
 baseline_2="{:.3f}".format(2*baseline_spw2)+'mJy'
-baseline_spw3=raw_input("Please input the baseline in spw3 (mJy): ")
+baseline_spw3=input("Please input the baseline in spw3 (mJy): ")
 baseline_3="{:.3f}".format(2*baseline_spw3)+'mJy'
 
+print('\n' + "The baselines of each spw are: "+str(baseline_0)+'\t'+str(baseline_1)+'\t'+str(baseline_2)+'\t'+str(baseline_3))
 
 
 #### sutract continuum channels which identify in the previous dirty cubes images
 print('\n' + "######## Sutract continuum channels with spw='0,1' ......")
 uvcontsub(vis= FontUV+'.noflagging.selfcal.ms',
     spw= '0,1',
-    fitspw=Channels.cont_spw01,
+    fitspw=Channels_cont_spw01,
     excludechans= False,          # fit the region in fitspw
     solint= 'int',             # no time averaging, do a fit for each integration and let the noise fits average out in the image
     fitorder= 1,            # polynomial order for the fits of the continuum
@@ -212,7 +216,7 @@ os.system('rm -r '+FontUV+'.noflagging.selfcal.ms.contsub')
 
 uvcontsub(vis= FontUV+'.noflagging.selfcal.ms',
     spw= '2,3',
-    fitspw=Channels.cont_spw23,
+    fitspw=Channels_cont_spw23,
     excludechans= False,          # fit the region in fitspw
     solint= 'int',             # no time averaging, do a fit for each integration and let the noise fits average out in the image
     fitorder= 1,            # polynomial order for the fits of the continuum
