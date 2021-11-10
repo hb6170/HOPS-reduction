@@ -4,7 +4,7 @@ import sys
 
 fw = open("Noise.txt", 'w')
 
-###################################################   Pre   ###################################################
+###################################################  START  ###################################################
 ################################################### selfcal ###################################################
 ###############################################################################################################
 
@@ -16,7 +16,7 @@ Solint3=raw_input("Please input the solint of third selfcal: ")
 
 
 #### create a temparary copy of the source
-print("Copy a temparary file of the source." + '\n')
+print('\n' + "######## Copy a temparary file of the source." + )
 os.system('cp -r ' + FontUV + '.ms tmp.ms')
 
 
@@ -48,7 +48,7 @@ plotms(vis=FontUV+'.ms',
 
 
 #### flag the channels of CO emission
-print('\n' + "######## Now flag the CO emission channels.")
+print('\n' + "######## Flag the CO emission channels.")
 CO_emission_channels=raw_input("Please input the CO emission channels: ")
 flagdata(vis='tmp.ms',
     spw=CO_emission_channels,
@@ -94,17 +94,13 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     savemodel='modelcolumn')
 
 #### obtain the rms, peak, SNR value
-print('\n' + "######## Noise, Peak and SNR of the pre_selfcal are: ")
+print('\n' + "######## Noise, Peak and SNR of pre-selfcal are: ")
 calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.dirty.image', stokes='I', region='', box='370,20,500,500')
-rms_preselfcal=(calstat['rms'][0])
-rms0=2*rms_preselfcal*1e3
-threshold_preselfcal="{:.3f}".format(rms0)+'mJy'
-print '>> rms_preselfcal in continuum image: '+str(rms_preselfcal*1e3)+' mJy'
+rms_preselfcal_dirty=(calstat['rms'][0])
+rms0_dirty=2*rms_preselfcal_dirty*1e3
+threshold_preselfcal="{:.3f}".format(rms0_dirty)+'mJy'
+print '>> rms_preselfcal in continuum image: '+str(rms_preselfcal_dirty*1e3)+' mJy'
 print '>> threshold_preselfcal: '+str(threshold_preselfcal)
-calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.dirty.image', region='')
-peak_preselfcal=(calstat['max'][0])
-print '>> Peak_preselfcal in continuum image: '+str(peak_preselfcal*1e3)+' mJy'
-print '>> Dynamic range of preselfcal in continuum image: '+str(peak_preselfcal/rms_preselfcal)+'\n'
 
 
 #### use tclean to make image for selfcal
@@ -133,12 +129,191 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     negativethreshold=0.0,
     interactive=False,
     savemodel='modelcolumn')
+    
+#### obtain the rms, peak, SNR value
+print('\n' + "######## Noise, Peak and SNR of pre-selfcal are: ")
+calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.image', stokes='I', region='', box='370,20,500,500')
+rms_preselfcal=(calstat['rms'][0])
+print '>> rms_preselfcal in continuum image: '+str(rms_preselfcal*1e3)+' mJy'
+calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.image', region='')
+peak_preselfcal=(calstat['max'][0])
+print '>> Peak_preselfcal in continuum image: '+str(peak_preselfcal*1e3)+' mJy'
+print '>> Dynamic range of preselfcal in continuum image: '+str(peak_preselfcal/rms_preselfcal)+'\n'
 
 
 
-###################################################  START  ###################################################
-################################################### selfcal ###################################################
-###############################################################################################################
+#### StokesQ:
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesQ.noselfcal.dirty',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='Q',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    pblimit=-1,
+    pbcor=True,
+    niter= 0,
+    interactive=False,
+    savemodel='modelcolumn')
+
+
+print('\n' + "######## Noise of the pre-selfcal dirty image with StokesQ is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesQ.noselfcal.dirty.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesQ_dirty=(calstat['rms'][0])
+rmsQ_preselfcal_dirty=2*rms_preselfcal_StokesQ_dirty*1e3
+threshold_preselfcal_StokesQ_dirty="{:.3f}".format(rmsQ_preselfcal_dirty)+'mJy'
+print '>> rms_preselfcal_StokesQ in dirty image: '+str(rms_preselfcal_StokesQ_dirty*1e3)+' mJy'
+print '>> threshold_preselfcal_StokesQ in dirty image: '+str(threshold_preselfcal_StokesQ_dirty)+ '\n'
+
+
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesQ.noselfcal',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='Q',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    threshold=threshold_preselfcal_StokesQ_dirty,
+    pblimit=-1,
+    pbcor=True,
+    niter=1000000,
+    usemask='auto-multithresh',
+    sidelobethreshold=2.0,
+    noisethreshold=4.25,
+    lownoisethreshold=1.5,
+    minbeamfrac=0.3,
+    growiterations=75,
+    negativethreshold=4.25,
+    interactive=False,
+    savemodel='modelcolumn')
+
+print('\n' + "######## Noise of the preselfcal with StokesQ is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesQ.noselfcal.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesQ=(calstat['rms'][0])
+print '>> rms_preselfcal_StokesQ: '+str(rms_preselfcal_StokesQ*1e3)+' mJy'
+
+
+#### StokesU:
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesU.noselfcal.dirty',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='U',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    pblimit=-1,
+    pbcor=True,
+    niter= 0,
+    interactive=False,
+    savemodel='modelcolumn')
+
+print('\n' + "######## Noise of the pre-selfcal dirty image with StokesU is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesU.noselfcal.dirty.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesU_dirty=(calstat['rms'][0])
+rmsU_preselfcal_dirty=2*rms_preselfcal_StokesU_dirty*1e3
+threshold_preselfcal_StokesU_dirty="{:.3f}".format(rmsU_preselfcal_dirty)+'mJy'
+print '>> rms_preselfcal_StokesU in dirty image: '+str(rms_preselfcal_StokesU_dirty*1e3)+' mJy'
+print '>> threshold_preselfcal_StokesU in dirty image: '+str(threshold_preselfcal_StokesU_dirty)+ '\n'
+
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesU.noselfcal',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='U',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    threshold=threshold_preselfcal_StokesU_dirty,
+    pblimit=-1,
+    pbcor=True,
+    niter=1000000,
+    usemask='auto-multithresh',
+    sidelobethreshold=2.0,
+    noisethreshold=4.25,
+    lownoisethreshold=1.5,
+    minbeamfrac=0.3,
+    growiterations=75,
+    negativethreshold=4.25,
+    interactive=False,
+    savemodel='modelcolumn')
+
+print('\n' + "######## Noise of the preselfcal with StokesU is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesU.noselfcal.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesU=(calstat['rms'][0])
+print '>> rms_preselfcal_StokesU: '+str(rms_preselfcal_StokesU*1e3)+' mJy'
+
+
+#### StokesV:
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesV.noselfcal.dirty',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='V',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    pblimit=-1,
+    pbcor=True,
+    niter= 0,
+    interactive=False,
+    savemodel='modelcolumn')
+
+print('\n' + "######## Noise of the pre-selfcal dirty image with StokesV is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesV.noselfcal.dirty.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesV_dirty=(calstat['rms'][0])
+rmsV_preselfcal_dirty=2*rms_preselfcal_StokesV_dirty*1e3
+threshold_preselfcal_StokesV_dirty="{:.3f}".format(rmsV_preselfcal_dirty)+'mJy'
+print '>> rms_preselfcal_StokesV in dirty image: '+str(rms_preselfcal_StokesV_dirty*1e3)+' mJy'
+print '>> threshold_preselfcal_StokesV in dirty image: '+str(threshold_preselfcal_StokesV_dirty)+ '\n'
+
+tclean(vis=FontUV+'.flaggedCO.ms',
+    imagename=FontUV+'.flaggedCO_StokesV.noselfcal',
+    spw='0,1,2,3',
+    specmode='mfs',
+    deconvolver='hogbom',
+    stokes='V',
+    gridder='standard',
+    imsize=512,
+    cell=['0.1arcsec'],
+    weighting='briggs',
+    robust=0.5,
+    threshold=threshold_preselfcal_StokesV_dirty,
+    pblimit=-1,
+    pbcor=True,
+    niter=1000000,
+    usemask='auto-multithresh',
+    sidelobethreshold=2.0,
+    noisethreshold=4.25,
+    lownoisethreshold=1.5,
+    minbeamfrac=0.3,
+    growiterations=75,
+    negativethreshold=4.25,
+    interactive=False,
+    savemodel='modelcolumn')
+
+print('\n' + "######## Noise of the preselfcal with StokesV is: ")
+calstat=imstat(imagename= FontUV+'.flaggedCO_StokesV.noselfcal.image', region='', box='370,20,500,500')
+rms_preselfcal_StokesV=(calstat['rms'][0])
+print '>> rms_preselfcal_StokesV: '+str(rms_preselfcal_StokesV*1e3)+' mJy'
+
 
 ################################################# 1st selfcal #################################################
 print('\n' + "######## First selfcal steps ......")
@@ -221,7 +396,7 @@ gaincal(vis=FontUV+'.flaggedCO.Slfc1.ms',
     spw='0,1,2,3',
     gaintype='T',
     calmode='p',
-    solint=Solint1)
+    solint=Solint2)
 
 plotcal(caltable=FontUV+'.flaggedCO.slfcal.2',
     xaxis='time',
@@ -293,7 +468,7 @@ gaincal(vis=FontUV+'.flaggedCO.Slfc2.ms',
     spw='0,1,2,3',
     gaintype='T',
     calmode='p',
-    solint=Solint1)
+    solint=Solint3)
 
 plotcal(caltable=FontUV+'.flaggedCO.slfcal.3',
     xaxis='time',
@@ -342,6 +517,34 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     threshold= '0.008mJy',
     interactive= False,
     savemodel= 'modelcolumn')
+    
+    
+#tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
+#    imagename= FontUV + '.flaggedCO.3.uvtaper',
+#    imsize= 512,
+#    cell= ['0.1arcsec'],
+#    field= '0',
+#    spw= '0,1,2,3',
+#    stokes= 'I',
+#    deconvolver= 'hogbom',
+#    weighting= 'briggs',
+#    robust= 0.5,
+#    gridder= 'standard',
+#    datacolumn= 'data',
+#    specmode= 'mfs',
+#    pblimit=-1,
+#    usemask='auto-multithresh',
+#    uvtaper='50klambda',
+#    sidelobethreshold=2.0,
+#    noisethreshold=4.25,
+#    lownoisethreshold=1.5,
+#    minbeamfrac=0.3,
+#    growiterations=75,
+#    negativethreshold=0.0,
+#    niter= 1000000,
+#    threshold= '0.008mJy',
+#    interactive= False,
+#    savemodel= 'modelcolumn')
 
 
 #### obtain the rms, peak, SNR value of 3rd_selfcal
@@ -541,6 +744,9 @@ print '>> rms_3rd_selfcal_StokesV: '+str(rms_3rd_selfcal_StokesV*1e3)+' mJy'
 
 
 fw.write("pre_selfcal: "+"\n"+"rms: "+str(rms_preselfcal*1e3)+" mJy"+"\t"+"peak: "+str(peak_preselfcal*1e3)+" mJy"+"\t"+"SNR: "+str(peak_preselfcal/rms_preselfcal)+"\n"+"\n")
+fw.write("pre_selfcal_StokesQ: "+"\n"+"rms: "+str(rms_preselfcal_StokesQ*1e3)+" mJy"+"\n"+"\n")
+fw.write("pre_selfcal_StokesU: "+"\n"+"rms: "+str(rms_preselfcal_StokesU*1e3)+" mJy"+"\n"+"\n")
+fw.write("pre_selfcal_StokesV: "+"\n"+"rms: "+str(rms_preselfcal_StokesV*1e3)+" mJy"+"\n"+"\n")
 fw.write("1st_selfcal: "+"\n"+"rms: "+str(rms_1st_selfcal*1e3)+" mJy"+"\t"+"peak: "+str(peak_1st_selfcal*1e3)+" mJy"+"\t"+"SNR: "+str(peak_1st_selfcal/rms_1st_selfcal)+"\n"+"\n")
 fw.write("2nd_selfcal: "+"\n"+"rms: "+str(rms_2nd_selfcal*1e3)+" mJy"+"\t"+"peak: "+str(peak_2nd_selfcal*1e3)+" mJy"+"\t"+"SNR: "+str(peak_2nd_selfcal/rms_2nd_selfcal)+"\n"+"\n")
 fw.write("3rd_selfcal: "+"\n"+"rms: "+str(rms_3rd_selfcal*1e3)+" mJy"+"\t"+"peak: "+str(peak_3rd_selfcal*1e3)+" mJy"+"\t"+"SNR: "+str(peak_3rd_selfcal/rms_3rd_selfcal)+"\n"+"\n")
