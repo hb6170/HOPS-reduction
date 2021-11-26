@@ -16,12 +16,12 @@ Solint3=raw_input("Please input the solint of third selfcal: ")
 
 
 #### create a temparary copy of the source
-print('\n' + "######## Copy a temparary file of the source." + )
+print("\n" + "######## Copy a temparary file of the source.")
 os.system('cp -r ' + FontUV + '.ms tmp.ms')
 
 
 #### Visually inspect amplitudes  vs.  frequency of the source in order to identify the channels of CO emission
-print('\n' + "######## Plot spectrum of the source to identify the CO emission channels.")
+print("\n" + "######## Plot spectrum of the source to identify the CO emission channels.")
 plotms(vis=FontUV+'.ms',
     spw='0',
     xaxis='channel',
@@ -48,13 +48,13 @@ plotms(vis=FontUV+'.ms',
 
 
 #### flag the channels of CO emission
-print('\n' + "######## Flag the CO emission channels.")
+print("\n" + "######## Flag the CO emission channels.")
 CO_emission_channels=raw_input("Please input the CO emission channels: ")
 flagdata(vis='tmp.ms',
     spw=CO_emission_channels,
     flagbackup=False)
 
-print('\n' + "######## Plot spectrum again to check the CO emission channels are indeed gone.")
+print("\n" + "######## Plot spectrum again to check the CO emission channels are indeed gone.")
 plotms(vis=FontUV+'.ms',
     spw='0',
     xaxis='channel',
@@ -66,7 +66,7 @@ plotms(vis=FontUV+'.ms',
 
 
 #### split the flagged CO emission temparary source
-print('\n' + "######## Split the temparary data.")
+print("\n" + "######## Split the temparary data.")
 split(vis='tmp.ms',
     spw='0,1,2,3',
     outputvis=FontUV+'.flaggedCO.ms',
@@ -75,7 +75,7 @@ split(vis='tmp.ms',
 
 
 #### make dirty image to check rms and peak value
-print('\n' + "######## Use tclean to make dirty image to check noise and peak value.")
+print("\n" + "######## Use tclean to make dirty image to check noise and peak value.")
 tclean(vis=FontUV+'.flaggedCO.ms',
     imagename=FontUV+'.flaggedCO_StokesI.noselfcal.dirty',
     spw='0,1,2,3',
@@ -90,11 +90,11 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     pblimit=-1,
     pbcor=True,
     niter=0,
-    interactive=False,
-    savemodel='modelcolumn')
+    interactive=False)
+
 
 #### obtain the rms, peak, SNR value
-print('\n' + "######## Noise, Peak and SNR of pre-selfcal are: ")
+print("\n" + "######## Noise, Peak and SNR of pre-selfcal are: ")
 calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.dirty.image', stokes='I', region='', box='370,20,500,500')
 rms_preselfcal_dirty=(calstat['rms'][0])
 rms0_dirty=2*rms_preselfcal_dirty*1e3
@@ -104,7 +104,7 @@ print '>> threshold_preselfcal: '+str(threshold_preselfcal)
 
 
 #### use tclean to make image for selfcal
-print('\n' + "######## Preperation tclean for selfcal.")
+print("\n" + "######## Preperation tclean for selfcal.")
 tclean(vis=FontUV+'.flaggedCO.ms',
     imagename=FontUV+'.flaggedCO_StokesI.noselfcal',
     spw='0,1,2,3',
@@ -131,14 +131,14 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     savemodel='modelcolumn')
     
 #### obtain the rms, peak, SNR value
-print('\n' + "######## Noise, Peak and SNR of pre-selfcal are: ")
+print("\n" + "######## Noise, Peak and SNR of pre-selfcal are: ")
 calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.image', stokes='I', region='', box='370,20,500,500')
 rms_preselfcal=(calstat['rms'][0])
 print '>> rms_preselfcal in continuum image: '+str(rms_preselfcal*1e3)+' mJy'
 calstat=imstat(imagename=FontUV+'.flaggedCO_StokesI.noselfcal.image', region='')
 peak_preselfcal=(calstat['max'][0])
 print '>> Peak_preselfcal in continuum image: '+str(peak_preselfcal*1e3)+' mJy'
-print '>> Dynamic range of preselfcal in continuum image: '+str(peak_preselfcal/rms_preselfcal)+'\n'
+print '>> Dynamic range of preselfcal in continuum image: '+str(peak_preselfcal/rms_preselfcal)+"\n"
 
 
 
@@ -157,17 +157,16 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     pblimit=-1,
     pbcor=True,
     niter= 0,
-    interactive=False,
-    savemodel='modelcolumn')
+    interactive=False)
 
 
-print('\n' + "######## Noise of the pre-selfcal dirty image with StokesQ is: ")
+print("\n" + "######## Noise of the pre-selfcal dirty image with StokesQ is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesQ.noselfcal.dirty.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesQ_dirty=(calstat['rms'][0])
 rmsQ_preselfcal_dirty=2*rms_preselfcal_StokesQ_dirty*1e3
 threshold_preselfcal_StokesQ_dirty="{:.3f}".format(rmsQ_preselfcal_dirty)+'mJy'
 print '>> rms_preselfcal_StokesQ in dirty image: '+str(rms_preselfcal_StokesQ_dirty*1e3)+' mJy'
-print '>> threshold_preselfcal_StokesQ in dirty image: '+str(threshold_preselfcal_StokesQ_dirty)+ '\n'
+print '>> threshold_preselfcal_StokesQ in dirty image: '+str(threshold_preselfcal_StokesQ_dirty)+ "\n"
 
 
 tclean(vis=FontUV+'.flaggedCO.ms',
@@ -195,7 +194,7 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     interactive=False,
     savemodel='modelcolumn')
 
-print('\n' + "######## Noise of the preselfcal with StokesQ is: ")
+print("\n" + "######## Noise of the preselfcal with StokesQ is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesQ.noselfcal.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesQ=(calstat['rms'][0])
 print '>> rms_preselfcal_StokesQ: '+str(rms_preselfcal_StokesQ*1e3)+' mJy'
@@ -216,16 +215,15 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     pblimit=-1,
     pbcor=True,
     niter= 0,
-    interactive=False,
-    savemodel='modelcolumn')
+    interactive=False)
 
-print('\n' + "######## Noise of the pre-selfcal dirty image with StokesU is: ")
+print("\n" + "######## Noise of the pre-selfcal dirty image with StokesU is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesU.noselfcal.dirty.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesU_dirty=(calstat['rms'][0])
 rmsU_preselfcal_dirty=2*rms_preselfcal_StokesU_dirty*1e3
 threshold_preselfcal_StokesU_dirty="{:.3f}".format(rmsU_preselfcal_dirty)+'mJy'
 print '>> rms_preselfcal_StokesU in dirty image: '+str(rms_preselfcal_StokesU_dirty*1e3)+' mJy'
-print '>> threshold_preselfcal_StokesU in dirty image: '+str(threshold_preselfcal_StokesU_dirty)+ '\n'
+print '>> threshold_preselfcal_StokesU in dirty image: '+str(threshold_preselfcal_StokesU_dirty)+ "\n"
 
 tclean(vis=FontUV+'.flaggedCO.ms',
     imagename=FontUV+'.flaggedCO_StokesU.noselfcal',
@@ -252,7 +250,7 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     interactive=False,
     savemodel='modelcolumn')
 
-print('\n' + "######## Noise of the preselfcal with StokesU is: ")
+print("\n" + "######## Noise of the preselfcal with StokesU is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesU.noselfcal.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesU=(calstat['rms'][0])
 print '>> rms_preselfcal_StokesU: '+str(rms_preselfcal_StokesU*1e3)+' mJy'
@@ -273,16 +271,15 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     pblimit=-1,
     pbcor=True,
     niter= 0,
-    interactive=False,
-    savemodel='modelcolumn')
+    interactive=False)
 
-print('\n' + "######## Noise of the pre-selfcal dirty image with StokesV is: ")
+print("\n" + "######## Noise of the pre-selfcal dirty image with StokesV is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesV.noselfcal.dirty.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesV_dirty=(calstat['rms'][0])
 rmsV_preselfcal_dirty=2*rms_preselfcal_StokesV_dirty*1e3
 threshold_preselfcal_StokesV_dirty="{:.3f}".format(rmsV_preselfcal_dirty)+'mJy'
 print '>> rms_preselfcal_StokesV in dirty image: '+str(rms_preselfcal_StokesV_dirty*1e3)+' mJy'
-print '>> threshold_preselfcal_StokesV in dirty image: '+str(threshold_preselfcal_StokesV_dirty)+ '\n'
+print '>> threshold_preselfcal_StokesV in dirty image: '+str(threshold_preselfcal_StokesV_dirty)+ "\n"
 
 tclean(vis=FontUV+'.flaggedCO.ms',
     imagename=FontUV+'.flaggedCO_StokesV.noselfcal',
@@ -309,14 +306,14 @@ tclean(vis=FontUV+'.flaggedCO.ms',
     interactive=False,
     savemodel='modelcolumn')
 
-print('\n' + "######## Noise of the preselfcal with StokesV is: ")
+print("\n" + "######## Noise of the preselfcal with StokesV is: ")
 calstat=imstat(imagename= FontUV+'.flaggedCO_StokesV.noselfcal.image', region='', box='370,20,500,500')
 rms_preselfcal_StokesV=(calstat['rms'][0])
 print '>> rms_preselfcal_StokesV: '+str(rms_preselfcal_StokesV*1e3)+' mJy'
 
 
 ################################################# 1st selfcal #################################################
-print('\n' + "######## First selfcal steps ......")
+print("\n" + "######## First selfcal steps ......")
 gaincal(vis=FontUV+'.flaggedCO.ms',
     caltable=FontUV+'.flaggedCO.slfcal.1',
     refant='DA43',
@@ -375,7 +372,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc1.ms',
    
 
 #### obtain the rms, peak, SNR value of 1st_selfcal
-print('\n' + "######## Noise, Peak and SNR of the first selfcal are: ")
+print("\n" + "######## Noise, Peak and SNR of the first selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.1.image', stokes='I', region='', box='370,20,500,500')
 rms_1st_selfcal=(calstat['rms'][0])
 rms1=2*rms_1st_selfcal*1e3
@@ -385,11 +382,11 @@ print '>> threshold_1st_selfcal: '+str(threshold_1st_selfcal)
 calstat=imstat(imagename=FontUV + '.flaggedCO.1.image', region='')
 peak_1st_selfcal=(calstat['max'][0])
 print '>> Peak_1st_selfcal in continuum image: '+str(peak_1st_selfcal*1e3)+' mJy'
-print '>> Dynamic range of 1st_selfcal in continuum image: '+str(peak_1st_selfcal/rms_1st_selfcal)+'\n'
+print '>> Dynamic range of 1st_selfcal in continuum image: '+str(peak_1st_selfcal/rms_1st_selfcal)+"\n"
 
 
 ################################################# 2nd selfcal #################################################
-print('\n' + "######## Second selfcal steps ......")
+print("\n" + "######## Second selfcal steps ......")
 gaincal(vis=FontUV+'.flaggedCO.Slfc1.ms',
     caltable=FontUV+'.flaggedCO.slfcal.2',
     refant='DA43',
@@ -448,7 +445,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc2.ms',
 
 
 #### obtain the rms, peak, SNR value of 2nd_selfcal
-print('\n' + "######## Noise, Peak and SNR of the second selfcal are: ")
+print("\n" + "######## Noise, Peak and SNR of the second selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.2.image', stokes='I', region='', box='370,20,500,500')
 rms_2nd_selfcal=(calstat['rms'][0])
 rms2=2*rms_2nd_selfcal*1e3
@@ -458,10 +455,10 @@ print '>> threshold_2nd_selfcal: '+str(threshold_2nd_selfcal)
 calstat=imstat(imagename=FontUV + '.flaggedCO.2.image', region='')
 peak_2nd_selfcal=(calstat['max'][0])
 print '>> Peak_2nd_selfcal in continuum image: '+str(peak_2nd_selfcal*1e3)+' mJy'
-print '>> Dynamic range of 2nd_selfcal in continuum image: '+str(peak_2nd_selfcal/rms_2nd_selfcal)+ '\n'
+print '>> Dynamic range of 2nd_selfcal in continuum image: '+str(peak_2nd_selfcal/rms_2nd_selfcal)+ "\n"
 
 ################################################# 3rd selfcal #################################################
-print('\n' + "######## Third selfcal steps ......")
+print("\n" + "######## Third selfcal steps ......")
 gaincal(vis=FontUV+'.flaggedCO.Slfc2.ms',
     caltable=FontUV+'.flaggedCO.slfcal.3',
     refant='DA43',
@@ -548,7 +545,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
 
 
 #### obtain the rms, peak, SNR value of 3rd_selfcal
-print('\n' + "######## Noise, Peak and SNR of the third selfcal are: ")
+print("\n" + "######## Noise, Peak and SNR of the third selfcal are: ")
 calstat=imstat(imagename=FontUV + '.flaggedCO.3.image', stokes='I', region='', box='370,20,500,500')
 rms_3rd_selfcal=(calstat['rms'][0])
 rms3=2*rms_3rd_selfcal*1e3
@@ -558,7 +555,7 @@ print '>> threshold_3rd_selfcal: '+str(threshold_3rd_selfcal)
 calstat=imstat(imagename=FontUV + '.flaggedCO.3.image', region='')
 peak_3rd_selfcal=(calstat['max'][0])
 print '>> Peak_3rd_selfcal in continuum image: '+str(peak_3rd_selfcal*1e3)+' mJy'
-print '>> Dynamic range of 3rd_selfcal in continuum image: '+str(peak_3rd_selfcal/rms_3rd_selfcal)+ '\n'
+print '>> Dynamic range of 3rd_selfcal in continuum image: '+str(peak_3rd_selfcal/rms_3rd_selfcal)+ "\n"
 
 
 ########################################## Stokes QVU in 3rd selfcal ##########################################
@@ -577,16 +574,15 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     specmode= 'mfs',
     pblimit=-1,
     niter= 0,
-    interactive= False,
-    savemodel= 'modelcolumn')
+    interactive= False)
     
-print('\n' + "######## Noise of the third selfcal dirty image with StokesQ is: ")
+print("\n" + "######## Noise of the third selfcal dirty image with StokesQ is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesQ.3rd_selfcal.dirty.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesQ_dirty=(calstat['rms'][0])
 rmsQ_dirty=2*rms_3rd_selfcal_StokesQ_dirty*1e3
 threshold_StokesQ_dirty="{:.3f}".format(rmsQ_dirty)+'mJy'
 print '>> rms_3rd_selfcal_StokesQ in dirty image: '+str(rms_3rd_selfcal_StokesQ_dirty*1e3)+' mJy'
-print '>> threshold_3rd_selfcal_StokesQ in dirty image: '+str(threshold_StokesQ_dirty)+ '\n'
+print '>> threshold_3rd_selfcal_StokesQ in dirty image: '+str(threshold_StokesQ_dirty)+ "\n"
 
 
 tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
@@ -616,7 +612,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     savemodel= 'modelcolumn')
 
 ## obtain rms value for the threshold in the tclean with StokesQ
-print('\n' + "######## Noise of the third selfcal with StokesQ is: ")
+print("\n" + "######## Noise of the third selfcal with StokesQ is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesQ.3rd_selfcal.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesQ=(calstat['rms'][0])
 print '>> rms_3rd_selfcal_StokesQ: '+str(rms_3rd_selfcal_StokesQ*1e3)+' mJy'
@@ -637,17 +633,16 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     specmode= 'mfs',
     pblimit=-1,
     niter= 0,
-    interactive= False,
-    savemodel= 'modelcolumn')
+    interactive= False)
 
 ## obtain rms value for the threshold in the tclean with StokesU
-print('\n' + "######## Noise of the third selfcal dirty image with StokesU is: ")
+print("\n" + "######## Noise of the third selfcal dirty image with StokesU is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesU.3rd_selfcal.dirty.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesU_dirty=(calstat['rms'][0])
 rmsU_dirty=2*rms_3rd_selfcal_StokesU_dirty*1e3
 threshold_StokesU_dirty="{:.3f}".format(rmsU_dirty)+'mJy'
 print '>> rms_3rd_selfcal_StokesU in dirty image: '+str(rms_3rd_selfcal_StokesU_dirty*1e3)+' mJy'
-print '>> threshold_3rd_selfcal_StokesU in dirty image: '+str(threshold_StokesU_dirty)+ '\n'
+print '>> threshold_3rd_selfcal_StokesU in dirty image: '+str(threshold_StokesU_dirty)+ "\n"
 
 tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     imagename= FontUV + '.flaggedCO_StokesU.3rd_selfcal',
@@ -676,7 +671,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     savemodel= 'modelcolumn')
 
 ## obtain rms value for the threshold in the tclean with StokesU
-print('\n' + "######## Noise of the third selfcal with StokesU is: ")
+print("\n" + "######## Noise of the third selfcal with StokesU is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesU.3rd_selfcal.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesU=(calstat['rms'][0])
 print '>> rms_3rd_selfcal_StokesU: '+str(rms_3rd_selfcal_StokesU*1e3)+' mJy'
@@ -697,17 +692,16 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     specmode= 'mfs',
     pblimit=-1,
     niter= 0,
-    interactive= False,
-    savemodel= 'modelcolumn')
+    interactive= False)
     
 ## obtain rms value for the threshold in the tclean with StokesV
-print('\n' + "######## Noise of the third selfcal dirty image with StokesV is: ")
+print("\n" + "######## Noise of the third selfcal dirty image with StokesV is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesV.3rd_selfcal.dirty.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesV_dirty=(calstat['rms'][0])
 rmsV_dirty=2*rms_3rd_selfcal_StokesV_dirty*1e3
 threshold_StokesV_dirty="{:.3f}".format(rmsV_dirty)+'mJy'
 print '>> rms_3rd_selfcal_StokesV in dirty image: '+str(rms_3rd_selfcal_StokesV_dirty*1e3)+' mJy'
-print '>> threshold_3rd_selfcal_StokesV in dirty image: '+str(threshold_StokesV_dirty)+ '\n'
+print '>> threshold_3rd_selfcal_StokesV in dirty image: '+str(threshold_StokesV_dirty)+ "\n"
 
     
 tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
@@ -737,7 +731,7 @@ tclean(vis= FontUV + '.flaggedCO.Slfc3.ms',
     savemodel= 'modelcolumn')
 
 ## obtain rms value for the threshold in the tclean with StokesV
-print('\n' + "######## Noise of the third selfcal with StokesV is: ")
+print("\n" + "######## Noise of the third selfcal with StokesV is: ")
 calstat=imstat(imagename= FontUV + '.flaggedCO_StokesV.3rd_selfcal.image', region='', box='370,20,500,500')
 rms_3rd_selfcal_StokesV=(calstat['rms'][0])
 print '>> rms_3rd_selfcal_StokesV: '+str(rms_3rd_selfcal_StokesV*1e3)+' mJy'
